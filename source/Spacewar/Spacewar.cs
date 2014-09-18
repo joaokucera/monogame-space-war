@@ -59,13 +59,6 @@ namespace Spacewar
 
             player.Update(gameTime, keyboard);
 
-            Rectangle playerRectangle = new Rectangle((int)player.playerPosition.X, (int)player.playerPosition.Y, player.playerTexture.Width, player.playerTexture.Height);
-            Rectangle playerRectangle2 = new Rectangle((int)player2.playerPosition.X, (int)player2.playerPosition.Y, player2.playerTexture.Width, player2.playerTexture.Height);
-
-            if (playerRectangle.Intersects(playerRectangle2))
-            {
-
-            }
 
             base.Update(gameTime);
         }

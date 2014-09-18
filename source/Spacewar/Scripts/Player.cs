@@ -16,9 +16,17 @@ namespace Spacewar.Scripts
         public Vector2 playerSpeed;
         public int health;
         public Rectangle screenSize;
-
+       
         private List<Shot> shotList = new List<Shot>();
         private Texture2D shotTexture;
+
+        public Rectangle PlayerBounds
+        {
+            get
+            {
+                return new Rectangle((int)playerPosition.X, (int)playerPosition.Y, playerTexture.Width,   playerTexture.Height);
+            }
+        }
 
         public Player(ContentManager Content)
         {
