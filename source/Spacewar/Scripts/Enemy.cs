@@ -11,6 +11,8 @@ namespace Spacewar.Scripts
 {
     public class Enemy
     {
+        #region Fields
+
         private Texture2D enemyTexture;
         private Vector2 enemyPosition;
         private Vector2 enemySpeed;
@@ -20,6 +22,10 @@ namespace Spacewar.Scripts
         private List<Shot> shotList = new List<Shot>();
         private Texture2D shotTexture;
 
+        #endregion
+
+        #region Properties
+
         public Rectangle Bounds
         {
             get
@@ -28,11 +34,19 @@ namespace Spacewar.Scripts
             }
         }
 
+        #endregion
+
+        #region Constructors
+
         public Enemy(ContentManager Content)
         {
             enemyTexture = Content.Load<Texture2D>("EnemyShip");
             shotTexture = Content.Load<Texture2D>("EnemyShip_Shot");
         }
+
+        #endregion
+
+        #region Methods
 
         public void Initialize(Rectangle screenSize)
         {
@@ -58,5 +72,7 @@ namespace Spacewar.Scripts
                 shot.Draw(gameTime, spriteBatch, shotTexture);
             }
         }
+
+        #endregion
     }
 }

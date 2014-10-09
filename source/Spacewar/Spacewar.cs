@@ -14,6 +14,8 @@ namespace Spacewar
 {
     public class Spacewar : Game
     {
+        #region Fields
+        
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -22,6 +24,10 @@ namespace Spacewar
         KeyboardState keyboard;
         List<Enemy> enemies = new List<Enemy>();
 
+        #endregion
+
+        #region Constructors
+
         public Spacewar()
             : base()
         {
@@ -29,6 +35,10 @@ namespace Spacewar
             Content.RootDirectory = "Content";
         }
 
+        #endregion
+
+        #region Methods
+        
         protected override void Initialize()
         {
             base.Initialize();
@@ -107,5 +117,7 @@ namespace Spacewar
 
             base.Draw(gameTime);
         }
+
+        #endregion
     }
 }
