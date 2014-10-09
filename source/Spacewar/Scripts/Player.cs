@@ -11,28 +11,52 @@ namespace Spacewar.Scripts
 {
     public class Player
     {
-        public Texture2D playerTexture;
-        public Vector2 playerPosition;
-        public Vector2 playerSpeed;
-        public int health;
-        public Rectangle screenSize;
-       
+        #region Fields
+
+        private Texture2D playerTexture;
+        private Vector2 playerPosition;
+        private Vector2 playerSpeed;
+        //private int health;
+        private Rectangle screenSize;
+
         private List<Shot> shotList = new List<Shot>();
         private Texture2D shotTexture;
 
-        public Rectangle PlayerBounds
+        private bool isShooted = false;
+
+        #endregion
+
+        #region Properties
+
+        public Rectangle Bounds
         {
             get
             {
-                return new Rectangle((int)playerPosition.X, (int)playerPosition.Y, playerTexture.Width,   playerTexture.Height);
+                return new Rectangle((int)playerPosition.X, (int)playerPosition.Y, playerTexture.Width, playerTexture.Height);
             }
         }
+
+        public List<Shot> ShotList
+        {
+            get
+            {
+                return shotList;
+            }
+        }
+
+        #endregion
+
+        #region Constructors
 
         public Player(ContentManager Content)
         {
             playerTexture = Content.Load<Texture2D>("PlayerIcon");
             shotTexture = Content.Load<Texture2D>("Player_Shot");
         }
+
+        #endregion
+
+        #region Methods
 
         public void Initialize(Rectangle screenSize)
         {
@@ -69,10 +93,16 @@ namespace Spacewar.Scripts
             playerPosition.X = MathHelper.Clamp(playerPosition.X, 0, this.screenSize.Width - playerTexture.Width);
             playerPosition.Y = MathHelper.Clamp(playerPosition.Y, 0, this.screenSize.Height - playerTexture.Height);
 
-            if (keyboard.IsKeyDown(Keys.Space))
+            if (keyboard.IsKeyDown(Keys.Space) && !isShooted)
             {
-                Shot shot = new Shot(playerPosition);
+                Shot shot = new Shot(playerPosition, shotTexture);
                 shotList.Add(shot);
+
+                isShooted = true;
+            }
+            if (keyboard.IsKeyUp(Keys.Space))
+            {
+                isShooted = false;
             }
 
             foreach (Shot shot in shotList)
@@ -90,5 +120,7 @@ namespace Spacewar.Scripts
                 shot.Draw(gameTime, spriteBatch, shotTexture);
             }
         }
+
+        #endregion
     }
 }

@@ -35,6 +35,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Scripts\Enemy.cs" />
     <Compile Include="Scripts\Player.cs" />
     <Compile Include="Scripts\Shot.cs" />
     <Compile Include="Spacewar.cs" />
@@ -59,7 +60,7 @@
     <Content Include="Content\Earth.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\EnemyShip_1.xnb">
+    <Content Include="Content\EnemyShip.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\EnemyShip_Shot.xnb">

@@ -19,8 +19,8 @@ namespace Spacewar
 
         Rectangle screenSize;
         Player player;
-        Player player2;
         KeyboardState keyboard;
+        List<Enemy> enemies = new List<Enemy>();
 
         public Spacewar()
             : base()
@@ -36,16 +36,21 @@ namespace Spacewar
             Viewport viewport = graphics.GraphicsDevice.Viewport;
             screenSize = new Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
 
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Initialize(screenSize);
+            }
+
             player.Initialize(screenSize);
-            player2.Initialize(screenSize);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            enemies.Add(new Enemy(Content));
+
             player = new Player(Content);
-            player2 = new Player(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -57,8 +62,30 @@ namespace Spacewar
                 Exit();
             }
 
-            player.Update(gameTime, keyboard);
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                Enemy enemy = enemies[i];
 
+                enemy.Update(gameTime);
+
+                for (int j = 0; j < player.ShotList.Count; j++)
+                {
+                    Shot shot = player.ShotList[j];
+
+                    if (enemy.Bounds.Intersects(shot.Bounds))
+                    {
+                        enemies.RemoveAt(i);
+                        enemy = null;
+                        i--;
+
+                        player.ShotList.RemoveAt(j);
+                        shot = null;
+                        j--;
+                    }
+                }
+            }
+
+            player.Update(gameTime, keyboard);
 
             base.Update(gameTime);
         }
@@ -69,8 +96,12 @@ namespace Spacewar
 
             spriteBatch.Begin();
 
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Draw(gameTime, spriteBatch);
+            }
+
             player.Draw(gameTime, spriteBatch);
-            player2.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
 
