@@ -14,13 +14,15 @@ namespace Spacewar.Scripts
         #region Fields
 
         private Texture2D enemyTexture;
+        private Texture2D shotTexture;
+
         private Vector2 enemyPosition;
         private Vector2 enemySpeed;
-        //private int health;
-        private Rectangle screenSize;
 
         private List<Shot> shotList = new List<Shot>();
-        private Texture2D shotTexture;
+        private Rectangle screenSize;
+
+        private bool isVisible;
 
         #endregion
 
@@ -34,33 +36,49 @@ namespace Spacewar.Scripts
             }
         }
 
+        public bool IsVisible { get { return this.isVisible; } }
+
         #endregion
 
         #region Constructors
 
-        public Enemy(ContentManager Content)
+        public Enemy(Texture2D enemyTexture, Texture2D shotTexture, Rectangle screenSize)
         {
-            enemyTexture = Content.Load<Texture2D>("EnemyShip");
-            shotTexture = Content.Load<Texture2D>("EnemyShip_Shot");
+            this.enemyTexture = enemyTexture;
+            this.shotTexture = shotTexture;
+            this.screenSize = screenSize;
+
+            enemyPosition = new Vector2(0, -enemyTexture.Height);
         }
 
         #endregion
 
         #region Methods
 
-        public void Initialize(Rectangle screenSize)
+        public void Spawn(float xPosition)
         {
-            this.screenSize = screenSize;
+            enemyPosition.X = xPosition;
+            enemyPosition.Y = -enemyTexture.Height;
 
-            enemyPosition.X = this.screenSize.Width / 2 - enemyTexture.Width / 2;
-            enemyPosition.Y = enemyTexture.Height;
-
-            enemySpeed = new Vector2(50f, 50f);
+            enemySpeed = new Vector2(0, 50f);
         }
 
         public void Update(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            enemyPosition.Y += enemySpeed.Y * deltaTime;
+
+            if (enemyPosition.Y + enemyTexture.Height > screenSize.Y)
+            {
+                isVisible = true;
+            }
+            else if (enemyPosition.Y > screenSize.Height)
+            {
+                isVisible = false;
+
+                enemySpeed = Vector2.Zero;
+            }
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

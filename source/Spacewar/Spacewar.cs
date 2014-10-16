@@ -14,15 +14,23 @@ namespace Spacewar
 {
     public class Spacewar : Game
     {
-        #region Fields
-        
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        #region Constants
 
-        Rectangle screenSize;
-        Player player;
-        KeyboardState keyboard;
-        List<Enemy> enemies = new List<Enemy>();
+        private const int AmountOfEnemies = 20;
+
+        #endregion
+
+        #region Fields
+
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+
+        private Rectangle screenSize;
+        private KeyboardState keyboard;
+
+        private Texture2D background;
+        private Player player;
+        private EnemySpawner enemySpawner;
 
         #endregion
 
@@ -38,7 +46,7 @@ namespace Spacewar
         #endregion
 
         #region Methods
-        
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -46,10 +54,7 @@ namespace Spacewar
             Viewport viewport = graphics.GraphicsDevice.Viewport;
             screenSize = new Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
 
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Initialize(screenSize);
-            }
+            enemySpawner.Initialize(screenSize, AmountOfEnemies);
 
             player.Initialize(screenSize);
         }
@@ -58,7 +63,9 @@ namespace Spacewar
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            enemies.Add(new Enemy(Content));
+            background = Content.Load<Texture2D>("B1_stars");
+
+            enemySpawner = new EnemySpawner(Content);
 
             player = new Player(Content);
         }
@@ -72,30 +79,11 @@ namespace Spacewar
                 Exit();
             }
 
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                Enemy enemy = enemies[i];
-
-                enemy.Update(gameTime);
-
-                for (int j = 0; j < player.ShotList.Count; j++)
-                {
-                    Shot shot = player.ShotList[j];
-
-                    if (enemy.Bounds.Intersects(shot.Bounds))
-                    {
-                        enemies.RemoveAt(i);
-                        enemy = null;
-                        i--;
-
-                        player.ShotList.RemoveAt(j);
-                        shot = null;
-                        j--;
-                    }
-                }
-            }
+            enemySpawner.Update(gameTime);
 
             player.Update(gameTime, keyboard);
+
+            UpdatePhysics(gameTime);
 
             base.Update(gameTime);
         }
@@ -106,16 +94,44 @@ namespace Spacewar
 
             spriteBatch.Begin();
 
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Draw(gameTime, spriteBatch);
-            }
+            spriteBatch.Draw(background, screenSize, Color.White);
+
+            enemySpawner.Draw(gameTime, spriteBatch);
 
             player.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void UpdatePhysics(GameTime gameTime)
+        {
+            for (int i = 0; i < enemySpawner.Enemies.Count; i++)
+            {
+                Enemy enemy = enemySpawner.Enemies[i];
+
+                if (enemy != null)
+                {
+                    enemy.Update(gameTime);
+
+                    for (int j = 0; j < player.ShotList.Count; j++)
+                    {
+                        Shot shot = player.ShotList[j];
+
+                        if (enemy.Bounds.Intersects(shot.Bounds))
+                        {
+                            enemySpawner.Enemies.RemoveAt(i);
+                            enemy = null;
+                            i--;
+
+                            player.ShotList.RemoveAt(j);
+                            shot = null;
+                            j--;
+                        }
+                    }
+                }
+            }
         }
 
         #endregion

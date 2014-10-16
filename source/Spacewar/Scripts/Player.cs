@@ -50,8 +50,8 @@ namespace Spacewar.Scripts
 
         public Player(ContentManager Content)
         {
-            playerTexture = Content.Load<Texture2D>("PlayerIcon");
-            shotTexture = Content.Load<Texture2D>("Player_Shot");
+            this.playerTexture = Content.Load<Texture2D>("PlayerIcon");
+            this.shotTexture = Content.Load<Texture2D>("Player_Shot");
         }
 
         #endregion
@@ -95,7 +95,9 @@ namespace Spacewar.Scripts
 
             if (keyboard.IsKeyDown(Keys.Space) && !isShooted)
             {
-                Shot shot = new Shot(playerPosition, shotTexture);
+                Vector2 shotPosition = new Vector2(playerPosition.X + playerTexture.Width / 2, playerPosition.Y);
+
+                Shot shot = new Shot(shotPosition, shotTexture);
                 shotList.Add(shot);
 
                 isShooted = true;

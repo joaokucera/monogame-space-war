@@ -36,7 +36,7 @@ namespace Spacewar.Scripts
             this.shotPosition = shotPosition;
             this.shotTexture = shotTexture;
 
-            shotSpeed = new Vector2(0, 1000);
+            this.shotSpeed = new Vector2(0, 500);
         }
 
         #endregion
