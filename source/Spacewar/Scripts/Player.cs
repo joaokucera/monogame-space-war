@@ -65,7 +65,7 @@ namespace Spacewar.Scripts
             playerPosition.X = this.screenSize.Width / 2 - playerTexture.Width / 2;
             playerPosition.Y = this.screenSize.Height - playerTexture.Height;
 
-            playerSpeed = new Vector2(150f, 150f);
+            playerSpeed = new Vector2(250f, 250f);
         }
 
         public void Update(GameTime gameTime, KeyboardState keyboard)
@@ -102,6 +102,7 @@ namespace Spacewar.Scripts
 
                 isShooted = true;
             }
+
             if (keyboard.IsKeyUp(Keys.Space))
             {
                 isShooted = false;

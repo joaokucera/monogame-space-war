@@ -60,7 +60,7 @@ namespace Spacewar.Scripts
             enemyPosition.X = xPosition;
             enemyPosition.Y = -enemyTexture.Height;
 
-            enemySpeed = new Vector2(0, 50f);
+            enemySpeed = new Vector2(0, 100f);
         }
 
         public void Update(GameTime gameTime)

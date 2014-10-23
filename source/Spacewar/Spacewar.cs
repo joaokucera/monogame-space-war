@@ -12,11 +12,19 @@ using Spacewar.Scripts;
 
 namespace Spacewar
 {
+    public enum GameScreen
+    {
+        Menu,
+        Level,
+        Victory,
+        Defeat
+    }
+
     public class Spacewar : Game
     {
         #region Constants
 
-        private const int AmountOfEnemies = 20;
+        private const int AmountOfEnemies = 2;
 
         #endregion
 
@@ -26,9 +34,15 @@ namespace Spacewar
         private SpriteBatch spriteBatch;
 
         private Rectangle screenSize;
-        private KeyboardState keyboard;
+        private Vector2 pressButtonPosition;
+        private string pressButtonText = "<PRESS ENTER TO START>";
+        private bool isButtonPressed = false;
 
-        private Texture2D background;
+        private KeyboardState keyboardState;
+        private SpriteFont gameSpriteFont;
+        private GameScreen gameScreen = GameScreen.Menu;
+
+        private Texture2D backgroundLevel, backgroundMenu, backgroundVictory, backgroundDefeat;
         private Player player;
         private EnemySpawner enemySpawner;
 
@@ -54,36 +68,70 @@ namespace Spacewar
             Viewport viewport = graphics.GraphicsDevice.Viewport;
             screenSize = new Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
 
-            enemySpawner.Initialize(screenSize, AmountOfEnemies);
-
-            player.Initialize(screenSize);
+            Vector2 pressButtonSize = gameSpriteFont.MeasureString(pressButtonText);
+            pressButtonPosition = new Vector2(screenSize.Width / 2 - pressButtonSize.Length() / 2, screenSize.Height / 1.15f);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            background = Content.Load<Texture2D>("B1_stars");
+            backgroundLevel = Content.Load<Texture2D>("B1_stars");
+            backgroundMenu = Content.Load<Texture2D>("Spacewar_Title_FINAL");
+            backgroundVictory = Content.Load<Texture2D>("Earth");
+            backgroundDefeat = Content.Load<Texture2D>("Enemy_Planet");
 
-            enemySpawner = new EnemySpawner(Content);
-
-            player = new Player(Content);
+            gameSpriteFont = Content.Load<SpriteFont>("GameFont");
         }
 
         protected override void Update(GameTime gameTime)
         {
-            keyboard = Keyboard.GetState();
+            keyboardState = Keyboard.GetState();
 
-            if (keyboard.IsKeyDown(Keys.Escape))
+            if (keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
 
-            enemySpawner.Update(gameTime);
+            if (gameScreen == GameScreen.Level)
+            {
+                enemySpawner.Update(gameTime);
 
-            player.Update(gameTime, keyboard);
+                player.Update(gameTime, keyboardState);
 
-            UpdatePhysics(gameTime);
+                UpdatePhysics(gameTime);
+
+                if (enemySpawner.Enemies.Count <= 0)
+                {
+                    gameScreen = GameScreen.Victory;
+                }
+            }
+            else
+            {
+                if (keyboardState.IsKeyDown(Keys.Enter) && !isButtonPressed)
+                {
+                    isButtonPressed = true;
+
+                    if (gameScreen == GameScreen.Menu)
+                    {
+                        enemySpawner = new EnemySpawner(Content);
+                        enemySpawner.Initialize(screenSize, AmountOfEnemies);
+
+                        player = new Player(Content);
+                        player.Initialize(screenSize);
+
+                        gameScreen = GameScreen.Level;
+                    }
+                    else
+                    {
+                        gameScreen = GameScreen.Menu;
+                    }
+                }
+                else if (keyboardState.IsKeyUp(Keys.Enter))
+                {
+                    isButtonPressed = false;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -94,15 +142,52 @@ namespace Spacewar
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(background, screenSize, Color.White);
+            if (gameScreen == GameScreen.Level)
+            {
+                spriteBatch.Draw(backgroundLevel, screenSize, Color.White);
 
-            enemySpawner.Draw(gameTime, spriteBatch);
+                enemySpawner.Draw(gameTime, spriteBatch);
 
-            player.Draw(gameTime, spriteBatch);
+                player.Draw(gameTime, spriteBatch);
+            }
+            else if (gameScreen == GameScreen.Menu)
+            {
+                spriteBatch.Draw(backgroundMenu, screenSize, Color.White);
+            }
+            else if (gameScreen == GameScreen.Victory)
+            {
+                spriteBatch.Draw(backgroundVictory, screenSize, Color.White);
+            }
+            else if (gameScreen == GameScreen.Defeat)
+            {
+                spriteBatch.Draw(backgroundDefeat, screenSize, Color.White);
+            }
+
+            DrawHUD();
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawHUD()
+        {
+            if (gameScreen == GameScreen.Level)
+            {
+                spriteBatch.DrawString(gameSpriteFont, "ENEMIES: " + enemySpawner.Enemies.Count, new Vector2(5, 5), Color.Yellow);
+            }
+            else if (gameScreen == GameScreen.Menu)
+            {
+                spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
+            }
+            else if (gameScreen == GameScreen.Victory)
+            {
+                spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
+            }
+            else if (gameScreen == GameScreen.Defeat)
+            {
+                spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
+            }
         }
 
         private void UpdatePhysics(GameTime gameTime)
@@ -114,6 +199,11 @@ namespace Spacewar
                 if (enemy != null)
                 {
                     enemy.Update(gameTime);
+
+                    if (enemy.Bounds.Intersects(player.Bounds))
+                    {
+                        gameScreen = GameScreen.Defeat;
+                    }
 
                     for (int j = 0; j < player.ShotList.Count; j++)
                     {
@@ -128,6 +218,8 @@ namespace Spacewar
                             player.ShotList.RemoveAt(j);
                             shot = null;
                             j--;
+
+                            break;
                         }
                     }
                 }
