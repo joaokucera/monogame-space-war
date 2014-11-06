@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Spacewar.Scripts
 {
@@ -52,13 +50,22 @@ namespace Spacewar.Scripts
 
         #region Methods
 
-        public void Initialize(Rectangle screenSize, int AmountOfEnemies)
+        public void Initialize(Rectangle screenSize, int amountOfEnemies)
         {
             this.screenSize = screenSize;
 
-            for (int i = 0; i < AmountOfEnemies; i++)
+            for (int i = 0; i < amountOfEnemies; i++)
             {
-                enemies.Add(new Enemy(enemyTexture, shotTexture, screenSize));
+                int choice = random.Next(0, 2);
+
+                if (choice == 0)
+                {
+                    enemies.Add(new Enemy(enemyTexture, screenSize));
+                }
+                else
+                {
+                    enemies.Add(new SpecialEnemy(enemyTexture, shotTexture, screenSize));
+                }
             }
         }
 
@@ -78,7 +85,7 @@ namespace Spacewar.Scripts
 
                     if (firstEnemyAvailabe != null)
                     {
-                        float xPosition = random.Next(screenSize.X, screenSize.Width - enemyTexture.Width);
+                        float xPosition = random.Next(screenSize.X + enemyTexture.Width, screenSize.Width - enemyTexture.Width * 2);
 
                         firstEnemyAvailabe.Spawn(xPosition);
                     }

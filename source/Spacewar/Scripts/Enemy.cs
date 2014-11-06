@@ -1,11 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Spacewar.Scripts
 {
@@ -13,13 +7,11 @@ namespace Spacewar.Scripts
     {
         #region Fields
 
-        private Texture2D enemyTexture;
-        private Texture2D shotTexture;
+        protected Texture2D enemyTexture;
 
-        private Vector2 enemyPosition;
+        protected Vector2 enemyPosition;
         private Vector2 enemySpeed;
 
-        private List<Shot> shotList = new List<Shot>();
         private Rectangle screenSize;
 
         private bool isVisible;
@@ -42,10 +34,9 @@ namespace Spacewar.Scripts
 
         #region Constructors
 
-        public Enemy(Texture2D enemyTexture, Texture2D shotTexture, Rectangle screenSize)
+        public Enemy(Texture2D enemyTexture, Rectangle screenSize)
         {
             this.enemyTexture = enemyTexture;
-            this.shotTexture = shotTexture;
             this.screenSize = screenSize;
 
             enemyPosition = new Vector2(0, -enemyTexture.Height);
@@ -63,7 +54,7 @@ namespace Spacewar.Scripts
             enemySpeed = new Vector2(0, 100f);
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -81,14 +72,9 @@ namespace Spacewar.Scripts
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(enemyTexture, enemyPosition, null, null, null, 0, null, Color.White, SpriteEffects.FlipVertically, 0);
-
-            foreach (Shot shot in shotList)
-            {
-                shot.Draw(gameTime, spriteBatch, shotTexture);
-            }
         }
 
         #endregion

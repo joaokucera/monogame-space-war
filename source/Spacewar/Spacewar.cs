@@ -1,12 +1,7 @@
 ﻿#region Using Statements
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
 using Spacewar.Scripts;
 #endregion
 
@@ -24,7 +19,7 @@ namespace Spacewar
     {
         #region Constants
 
-        private const int AmountOfEnemies = 2;
+        private const int AmountOfEnemies = 5;
 
         #endregion
 
@@ -176,15 +171,7 @@ namespace Spacewar
             {
                 spriteBatch.DrawString(gameSpriteFont, "ENEMIES: " + enemySpawner.Enemies.Count, new Vector2(5, 5), Color.Yellow);
             }
-            else if (gameScreen == GameScreen.Menu)
-            {
-                spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
-            }
-            else if (gameScreen == GameScreen.Victory)
-            {
-                spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
-            }
-            else if (gameScreen == GameScreen.Defeat)
+            else
             {
                 spriteBatch.DrawString(gameSpriteFont, pressButtonText, pressButtonPosition, Color.Yellow);
             }

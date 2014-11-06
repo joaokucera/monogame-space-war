@@ -1,24 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Spacewar.Scripts
 {
     public class Shot
     {
         #region Fields
-        
-        private Vector2 shotPosition;
-        private Vector2 shotSpeed;
+
+        protected Vector2 shotPosition;
+        protected Vector2 shotSpeed;
+
         private Texture2D shotTexture;
 
         #endregion
 
         #region Properties
-        
+
         public Rectangle Bounds
         {
             get
@@ -42,8 +39,8 @@ namespace Spacewar.Scripts
         #endregion
 
         #region Methods
-        
-        public void Update(GameTime gameTime)
+
+        public virtual void Update(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
